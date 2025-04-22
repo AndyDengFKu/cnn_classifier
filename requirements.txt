@@ -10,13 +10,18 @@ torchaudio==2.5.1
 mlflow
 notebook
 numpy
+gdown
+dvc
 matplotlib
 pandas
 tqdm
 pyYAML
 scipy
+seaborn
 python-box
 ensure
+joblib
+types-PyYAML
 Flask
 Flask-Cors
 -e .
