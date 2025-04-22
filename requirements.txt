@@ -1,0 +1,19 @@
+# 指定 PyTorch CUDA11.8 的 wheel 索引
+--extra-index-url https://download.pytorch.org/whl/cu118
+
+# GPU 版本
+torch==2.5.1
+torchvision==0.20.1
+torchaudio==2.5.1
+
+# MLFLOW
+mlflow
+notebook
+numpy
+matplotlib
+pandas
+tqdm
+pyYAML
+Flask
+Flask-Cors
+-e .
