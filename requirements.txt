@@ -24,4 +24,5 @@ joblib
 types-PyYAML
 Flask
 Flask-Cors
+ultralytics
 -e .
