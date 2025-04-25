@@ -1,8 +1,8 @@
 AUGMENTATION: True
-IMAGE_SIZE: [224, 224, 3] # as per VGG 16 model
+IMAGE_SIZE: [224, 224, 3]
 BATCH_SIZE: 16
 INCLUDE_TOP: False
 EPOCHS: 1
 CLASSES: 2
-WEIGHTS: imagenet
+WEIGHTS: "imagenet"   # 改为字符串 "imagenet"，PyTorch 会加载 ResNet18_Weights.IMAGENET1K_V1
 LEARNING_RATE: 0.01
