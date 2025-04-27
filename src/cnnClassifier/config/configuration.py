@@ -1,7 +1,7 @@
 import os
 from cnnClassifier.constants import *
 from cnnClassifier.utils.common import read_yaml, create_directories
-from cnnClassifier.entity.config_entity import DataIngestionConfig, PrepareBaseModelConfig, TrainingConfig, EvaluationConfig
+from cnnClassifier.entity.config_entity import DataIngestionConfig, PrepareBaseModelConfig, TrainingConfig, EvaluationConfig, PredictionConfig
 
 class ConfigurationManager:
     def __init__(
@@ -82,3 +82,14 @@ class ConfigurationManager:
             params_num_classes=self.params.CLASSES
         )
             return eval_config
+    
+    def get_prediction_config(self) -> PredictionConfig:
+            predict_config = PredictionConfig(
+            path_of_model=Path("artifacts/training/model.pt"),
+            training_data=Path("artifacts/data_ingestion/Chest-CT-Scan-data"),
+            all_params=self.params,
+            params_image_size=self.params.IMAGE_SIZE,
+            params_num_classes=self.params.CLASSES
+        )
+            return predict_config
+
