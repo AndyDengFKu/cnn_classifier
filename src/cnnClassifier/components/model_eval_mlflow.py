@@ -36,7 +36,7 @@ class Evaluation:
 
     @staticmethod
     def load_model(path: Path, num_classes: int, device):
-        model = models.resnet18(pretrained=False)
+        model = models.resnet18(weights=None)
         model.fc = nn.Linear(model.fc.in_features, num_classes)
         state = torch.load(path, map_location=device)
         model.load_state_dict(state)
@@ -68,7 +68,7 @@ class Evaluation:
   
         # 1. dagshub + mlflow init
         dagshub.init(
-            repo_owner='AndyDengFKu',
+            repo_owner='ZiqiDengZs',
             repo_name='cnn_classifier',
             mlflow=True
         )
