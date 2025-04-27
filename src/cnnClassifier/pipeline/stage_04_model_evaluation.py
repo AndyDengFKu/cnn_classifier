@@ -15,7 +15,8 @@ class EvaluationPipeline:
         config = ConfigurationManager()
         eval_config = config.get_evaluation_config()
         evaluation = Evaluation(eval_config)
-        evaluation.evaluation()
+        evaluation = Evaluation(eval_config)
+        evaluation.evaluation(upload_to_mlflow=False)  # False = 只本地评估， True = 上传到mlflow
 
 
 if __name__ == '__main__':

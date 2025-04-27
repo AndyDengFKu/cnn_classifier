@@ -35,7 +35,7 @@ class PredictionPipeline:
         model.fc = nn.Linear(in_features, self.config.params_num_classes)
 
         # Load trained weights
-        state_dict = torch.load(os.path.join("model", "model.h5"), map_location=self.device)
+        state_dict = torch.load(os.path.join("model", "model.pt"), map_location=self.device)
         model.load_state_dict(state_dict)
         model.to(self.device).eval()
         return model

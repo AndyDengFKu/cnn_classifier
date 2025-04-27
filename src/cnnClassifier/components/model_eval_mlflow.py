@@ -64,47 +64,48 @@ class Evaluation:
         scores = {"loss": self.val_loss, "accuracy": self.val_acc}
         save_json(path=Path("scores.json"), data=scores)
 
-    def evaluation(self):
-  
-        # 1. dagshub + mlflow init
+    def evaluation(self, upload_to_mlflow=True):
+        self.evaluate()
+        self.save_score()
+
+        if not upload_to_mlflow:
+            # 🌟 Local evaluation: print a clean result summary
+            print("\n" + "="*30)
+            print("📊 Local Evaluation Completed")
+            print(f"✅ Validation Loss     : {self.val_loss:.4f}")
+            print(f"✅ Validation Accuracy : {self.val_acc*100:.2f}%")
+            print("="*30 + "\n")
+            return
+        
+        # === 下面是原本 mlflow 上传的逻辑 ===
         dagshub.init(
             repo_owner='ZiqiDengZs',
             repo_name='cnn_classifier',
             mlflow=True
         )
-        # # 2. 设置 MLflow tracking server URI
-        # mlflow.set_tracking_uri(self.config.mlflow_uri)
-
-        # 获取 Tracking URI 的 scheme，用于判断 file store vs. 远程
+        
         tracking_scheme = urlparse(mlflow.get_tracking_uri()).scheme
 
-        # 3. 开启一个 MLflow run
+
+
         with mlflow.start_run():
-            # 4. 评估 & 保存分数
-            self.evaluate()
-            self.save_score()
+                self.evaluate()
+                self.save_score()
 
-            # 5. 一次性记录所有超参数
-            mlflow.log_params(self.config.all_params)
+                mlflow.log_params(self.config.all_params)
+                mlflow.log_metric('val_loss', self.val_loss)
+                mlflow.log_metric('val_accuracy', self.val_acc)
 
-            # 6. 记录关键指标
-            mlflow.log_metric('val_loss', self.val_loss)
-            mlflow.log_metric('val_accuracy', self.val_acc)
+                mlflow.log_artifact("scores.json")
 
-            # 7. 上传 scores.json（可选）
-            mlflow.log_artifact("scores.json")
-
-            # 8. 保存模型 artifact
-            if tracking_scheme != "file":
-                # 远程 Registry：带注册名
-                mlflow.pytorch.log_model(
-                    self.model,
-                    artifact_path="models",
-                    registered_model_name="ResNet18Model"
-                )
-            else:
-                # 本地 file store：只当做 artifact 保存
-                mlflow.pytorch.log_model(
-                    self.model,
-                    artifact_path="models"
-                )
+                if tracking_scheme != "file":
+                    mlflow.pytorch.log_model(
+                        self.model,
+                        artifact_path="models",
+                        registered_model_name="ResNet18Model"
+                    )
+                else:
+                    mlflow.pytorch.log_model(
+                        self.model,
+                        artifact_path="models"
+                    )
