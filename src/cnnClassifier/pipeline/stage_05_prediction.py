@@ -61,7 +61,7 @@ class PredictionPipeline:
         label = self.class_names[idx]
         print(f"Predicted result: index {idx} -> class '{label}', confidence {confidence:.3f}")
 
-        # Return structured result
+        # Return result
         return [{
             "index": idx,
             "label": label,
