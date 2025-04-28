@@ -49,7 +49,7 @@
 
 	
 ## 3. Create ECR repo to store/save docker image
-    - Save the URI: 017868794354.dkr.ecr.ap-southeast-2.amazonaws.com/chest
+    - Save the URI: 017868794354.dkr.ecr.ap-southeast-2.amazonaws.com/chest-predict
 
 	
 ## 4. Create EC2 machine (Ubuntu) 
