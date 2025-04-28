@@ -77,7 +77,6 @@ class Evaluation:
             print("="*30 + "\n")
             return
         
-        # === 下面是原本 mlflow 上传的逻辑 ===
         dagshub.init(
             repo_owner='ZiqiDengZs',
             repo_name='cnn_classifier',

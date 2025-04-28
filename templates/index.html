@@ -89,6 +89,47 @@
 		}
 		.right-part{border:1px solid #dedede;padding:5px;}
 		.logo{position:absolute;right:0px;bottom:0px;margin-right:30px;margin-bottom:30px;}
+		
+		/* 原有样式保留 */
+    
+		/* +++ 新增结果卡片样式 +++ */
+		.result-card {
+			background: white;
+			border-radius: 8px;
+			box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+			margin: 10px 0;
+			padding: 15px;
+		}
+		.result-header {
+			color: #1b2d6b;
+			font-weight: bold;
+			margin-bottom: 15px;
+		}
+		.progress {
+			height: 25px;
+			margin-bottom: 10px;
+			border-radius: 4px;
+			background-color: #f1f1f1;
+		}
+		.progress-bar {
+			background-color: #363e75;
+			transition: width 1s ease-in-out;
+		}
+		.highlight {
+			border-left: 4px solid #28a745;
+			background-color: #f8f9fa;
+		}
+		.confidence-text {
+			color: #1b2d6b;
+			font-weight: 500;
+		}
+		.prediction-image {
+			border: 2px solid #1b2d6b;
+			border-radius: 8px;
+			padding: 5px;
+			max-height: 300px;
+			object-fit: contain;
+		}
 	</style>
 </head>
 <body>
@@ -176,18 +217,76 @@ function sendRequest(base64Data){
 					'Access-Control-Allow-Origin':'*'
 				},
 				data:JSON.stringify({image:base64Data}),
+				// success: function(res){
+				// 	$(".res-part").html("");
+				// 	$(".res-part2").html("");
+				// 	try{
+				// 		var imageData = res[1].image;
+				// 		if(imageData.length > 100){
+				// 			if(imageData.length > 10){$(".res-part2").append("<img class='resp-img' src='data:image/jpeg;base64," + imageData + "' alt='' />");}
+				// 		}
+				// 	}catch(e){}
+				// 	$(".res-part").html("<pre>" + JSON.stringify(res[0], undefined, 2) + "</pre>");
+				// 	$("#loading").hide();
+				// }
+
+				// 替换原有的ajax success回调函数 +++
 				success: function(res){
+					$("#loading").hide();
+					
+					// 清空结果区域
 					$(".res-part").html("");
 					$(".res-part2").html("");
-					try{
+
+					// +++ 处理图像显示 +++
+					try {
 						var imageData = res[1].image;
-						if(imageData.length > 100){
-							if(imageData.length > 10){$(".res-part2").append("<img class='resp-img' src='data:image/jpeg;base64," + imageData + "' alt='' />");}
+						if(imageData && imageData.length > 100) {
+							$(".res-part2").html(`
+								<div class="result-card">
+									<h6 class="result-header">Processed Image</h6>
+									<img class="prediction-image w-100" 
+										src="data:image/jpeg;base64,${imageData}" 
+										alt="Prediction Result">
+								</div>
+							`);
 						}
-					}catch(e){}
-					$(".res-part").html("<pre>" + JSON.stringify(res[0], undefined, 2) + "</pre>");
-					$("#loading").hide();
+					} catch(e) {}
+
+					// +++ 处理预测结果 +++
+					if(res && res.length > 0) {
+						const predictions = res.map(p => ({
+							class_name: p.label,
+							confidence: p.confidence
+						}));
+						let maxConfidence = Math.max(...predictions.map(p => p.confidence));
+						
+						const resultsHTML = `
+							<div class="result-card">
+								<h6 class="result-header">Diagnosis Results</h6>
+								<div class="results-container">
+									${predictions.map(p => `
+										<div class="result-item ${p.confidence === maxConfidence ? 'highlight' : ''} 
+											mb-2 p-2">
+											<div class="d-flex justify-content-between">
+												<span class="confidence-text">${p.class_name}</span>
+												<span class="confidence-value">${(p.confidence * 100).toFixed(1)}%</span>
+											</div>
+											<div class="progress">
+												<div class="progress-bar" 
+													role="progressbar" 
+													style="width: ${p.confidence * 100}%">
+												</div>
+											</div>
+										</div>
+									`).join('')}
+								</div>
+							</div>
+						`;
+						$(".res-part").html(resultsHTML);
+					}
 				}
+				
 			});
 		}
 	}
