@@ -3,14 +3,12 @@ import torch.nn as nn
 from torchvision import transforms, models, datasets
 from PIL import Image
 from pathlib import Path
-from cnnClassifier.entity.config_entity import TrainingConfig
 import os
 
 
 class PredictionPipeline:
     def __init__(self,
                  filename: str,
-                 config: TrainingConfig,
                  device: torch.device = None):
         """
         :param filename: Path to the image to predict
@@ -18,11 +16,11 @@ class PredictionPipeline:
         :param device: torch.device, optional. Automatically selects GPU/CPU if not specified
         """
         self.filename = filename
-        self.config = config
         self.device = device or torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
         # Load class names (subfolder names from ImageFolder)
-        self.class_names = datasets.ImageFolder(self.config.training_data).classes
+        # self.class_names = datasets.ImageFolder(self.config.training_data).classes
+        self.class_names = ["adenocarcinoma", "normal"]
         print(f"Class index mapping: {{i: name for i, name in enumerate(self.class_names)}}")
 
         # Build and load model
@@ -32,7 +30,7 @@ class PredictionPipeline:
         # Model architecture should match training configuration
         model = models.resnet18(weights=None)
         in_features = model.fc.in_features
-        model.fc = nn.Linear(in_features, self.config.params_num_classes)
+        model.fc = nn.Linear(in_features, 2)
 
         # Load trained weights
         state_dict = torch.load(os.path.join("model", "model.pt"), map_location=self.device)
@@ -43,7 +41,7 @@ class PredictionPipeline:
     def predict(self) -> list:
         # Preprocessing pipeline (should match training transformations)
         preprocess = transforms.Compose([
-            transforms.Resize(self.config.params_image_size[:2]),
+            transforms.Resize((224, 224)),
             transforms.ToTensor(),
             transforms.Normalize(mean=[0.485, 0.456, 0.406],
                                   std=[0.229, 0.224, 0.225])

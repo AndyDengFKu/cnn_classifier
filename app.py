@@ -2,7 +2,6 @@ from flask import Flask, request, jsonify, render_template
 import os
 from flask_cors import CORS, cross_origin
 from cnnClassifier.utils.common import decodeImage
-from cnnClassifier.config.configuration import ConfigurationManager
 from cnnClassifier.pipeline.stage_05_prediction import PredictionPipeline
 
 
@@ -16,9 +15,7 @@ CORS(app)
 class ClientApp:
     def __init__(self):
         self.filename = "inputImage.jpg"
-        self.config = ConfigurationManager()
-        self.prediction_config = self.config.get_prediction_config()
-        self.classifier = PredictionPipeline(self.filename, self.prediction_config)
+        self.classifier = PredictionPipeline(self.filename)
 
 
 
