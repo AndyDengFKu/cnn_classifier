@@ -91,6 +91,8 @@ jobs:
           if docker ps -a --filter "name=cnncls" -q; then
             docker stop cnncls
             docker rm -fv cnncls
+          else
+            echo "No existing container found, skipping stop and remove."
           fi
        
       - name: Run Docker Image to serve users

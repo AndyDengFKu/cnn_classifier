@@ -18,7 +18,7 @@ class PredictionPipeline:
         self.filename = filename
         self.device = device or torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-        # Load class names (subfolder names from ImageFolder)
+        # Load class names
         # self.class_names = datasets.ImageFolder(self.config.training_data).classes
         self.class_names = ["adenocarcinoma", "normal"]
         print(f"Class index mapping: {{i: name for i, name in enumerate(self.class_names)}}")
