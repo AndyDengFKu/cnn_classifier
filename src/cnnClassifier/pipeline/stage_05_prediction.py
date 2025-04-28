@@ -39,7 +39,7 @@ class PredictionPipeline:
         return model
 
     def predict(self) -> list:
-        # Preprocessing pipeline (should match training transformations)
+        # Preprocessing pipeline
         preprocess = transforms.Compose([
             transforms.Resize((224, 224)),
             transforms.ToTensor(),
